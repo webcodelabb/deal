@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DealFinder Bot - Never Miss a Price Drop Again!</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #fafafa;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Loading Animation */
+        .loading {
+            opacity: 0;
+            animation: fadeIn 0.8s ease-in forwards;
+        }
+
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            pointer-events: none;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.2;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .subtitle {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Features Section */
+        .features {
+            padding: 60px 0;
+            background: white;
+            margin: 40px 0;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-top: 40px;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 30px 20px;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .feature-card h3 {
+            font-size: 1.25rem;
+            margin-bottom: 15px;
+            color: #2d3748;
+        }
+
+        .feature-card p {
+            color: #4a5568;
+            font-size: 0.95rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 80px 0;
+        }
+
+        .description-section {
+            background: white;
+            border-radius: 16px;
+            padding: 60px 40px;
+            margin-bottom: 60px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            position: relative;
+        }
+
+        .description-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 16px 16px 0 0;
+        }
+
+        .description-section h2 {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: #2d3748;
+        }
+
+        .description-section p {
+            font-size: 1.1rem;
+            color: #4a5568;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-decoration: none;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        /* Screenshot Section */
+        .screenshot-section {
+            background: white;
+            border-radius: 16px;
+            padding: 60px 40px;
+            margin-bottom: 60px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .screenshot-section h2 {
+            font-size: 2rem;
+            margin-bottom: 40px;
+            color: #2d3748;
+        }
+
+        .screenshot-placeholder {
+            background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+            border: 2px dashed #cbd5e0;
+            border-radius: 12px;
+            padding: 80px 40px;
+            margin: 0 auto;
+            max-width: 500px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .screenshot-placeholder:hover {
+            border-color: #667eea;
+            transform: scale(1.02);
+        }
+
+        .screenshot-placeholder::before {
+            content: "📱";
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        .screenshot-placeholder::after {
+            content: "Sample Telegram Alert";
+            font-size: 1.1rem;
+            color: #718096;
+            font-weight: 500;
+        }
+
+        .alert-message {
+            background: #e6fffa;
+            border: 1px solid #81e6d9;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: left;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-message .price {
+            color: #38a169;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* Social Proof */
+        .social-proof {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            margin-bottom: 60px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .social-proof h3 {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            color: #2d3748;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+            display: block;
+        }
+
+        .stat-label {
+            color: #4a5568;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Footer */
+        .footer {
+            background: #2d3748;
+            color: white;
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .footer p {
+            margin-bottom: 10px;
+        }
+
+        .footer a {
+            color: #81e6d9;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer a:hover {
+            color: #4fd1c7;
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+
+            .header .subtitle {
+                font-size: 1.1rem;
+            }
+
+            .description-section,
+            .screenshot-section,
+            .features,
+            .social-proof {
+                padding: 40px 20px;
+                margin-bottom: 40px;
+            }
+
+            .description-section h2,
+            .screenshot-section h2 {
+                font-size: 1.75rem;
+            }
+
+            .cta-button {
+                padding: 14px 28px;
+                font-size: 1rem;
+            }
+
+            .screenshot-placeholder {
+                padding: 60px 20px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 60px 0;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .main-content {
+                padding: 60px 0;
+            }
+
+            .description-section,
+            .screenshot-section,
+            .features,
+            .social-proof {
+                padding: 30px 15px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Scroll to top button */
+        .scroll-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #667eea;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .scroll-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .scroll-top:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header loading">
+        <div class="container">
+            <h1>Never Miss a Price Drop Again!</h1>
+            <p class="subtitle">Track prices from Amazon, AliExpress, Jumia, and Konga. Get instant Telegram alerts when prices fall.</p>
+        </div>
+    </header>
+
+    <!-- Features Section -->
+    <div class="container">
+        <section class="features loading">
+            <div class="container">
+                <h2 style="text-align: center; margin-bottom: 20px; color: #2d3748;">Why Choose DealFinder Bot?</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <span class="feature-icon">🔗</span>
+                        <h3>Easy Setup</h3>
+                        <p>Just paste any product link and we'll start monitoring prices instantly</p>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">⚡</span>
+                        <h3>Instant Alerts</h3>
+                        <p>Get notified immediately when prices drop on your tracked items</p>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">💰</span>
+                        <h3>Save Money</h3>
+                        <p>Never overpay again with our smart price tracking technology</p>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">🆓</span>
+                        <h3>100% Free</h3>
+                        <p>No hidden fees or subscriptions - completely free to use</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Description Section -->
+            <section class="description-section loading">
+                <h2>Smart Shopping Made Simple</h2>
+                <p>
+                    DealFinder Bot is your personal price tracking assistant. Simply paste any product link from your favorite online stores, 
+                    and we'll monitor the prices 24/7. When prices drop, you'll get instant notifications on Telegram - no more missing out on great deals!
+                </p>
+                <p>
+                    Perfect for smart shoppers who want to save money without constantly checking prices. 
+                    Our free Telegram bot works with Amazon, AliExpress, Jumia, Konga, and many more popular stores.
+                </p>
+                <a href="https://t.me/Track_Deals_Bot" class="cta-button" target="_blank" rel="noopener">
+                    Try the Bot on Telegram
+                </a>
+            </section>
+
+            <!-- Social Proof -->
+            <section class="social-proof loading">
+                <h3>Trusted by Smart Shoppers</h3>
+                <div class="stats">
+                    <div class="stat">
+                        <span class="stat-number">10K+</span>
+                        <span class="stat-label">Active Users</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">50K+</span>
+                        <span class="stat-label">Products Tracked</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">$2M+</span>
+                        <span class="stat-label">Money Saved</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">4.9★</span>
+                        <span class="stat-label">User Rating</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Screenshot Section -->
+            <section class="screenshot-section loading">
+                <h2>See It in Action</h2>
+                <div class="screenshot-placeholder">
+                    <div class="alert-message">
+                        <strong>🚨 Price Drop Alert!</strong><br>
+                        <strong>Wireless Earbuds</strong><br>
+                        <span class="price">$29.99</span> (was $49.99)<br>
+                        <small>Amazon • 2 hours ago</small>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer loading">
+        <div class="container">
+            <p>&copy; DealFinder Bot 2025. All rights reserved.</p>
+            <p>Questions? Contact us at <a href="mailto:webcodelabb@gmail.com">webcodelabb@gmail.com</a></p>
+        </div>
+    </footer>
+
+    <!-- Scroll to top button -->
+    <a href="#" class="scroll-top" id="scrollTop">↑</a>
+
+    <script>
+        // Scroll to top functionality
+        const scrollTop = document.getElementById('scrollTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                scrollTop.classList.add('visible');
+            } else {
+                scrollTop.classList.remove('visible');
+            }
+        });
+
+        scrollTop.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Staggered loading animation
+        const loadingElements = document.querySelectorAll('.loading');
+        loadingElements.forEach((el, index) => {
+            el.style.animationDelay = `${index * 0.2}s`;
+        });
+    </script>
+</body>
+</html>
